@@ -77,6 +77,9 @@ const generateOptionalChain = (node, j) => {
     case "MemberExpression":
     case "CallExpression":
     case "BinaryExpression":
+    case "LogicalExpression":
+    case "OptionalCallExpression":
+    case "OptionalMemberExpression":
       return defaultOptionalChain(node, j);
     default:
       throw new Error(
@@ -97,6 +100,10 @@ const skip = (node, options) => {
     case "MemberExpression":
     case "CallExpression":
     case "BinaryExpression":
+    case "LogicalExpression":
+    case "OptionalCallExpression":
+    case "OptionalMemberExpression":
+    case "ConditionalExpression":
       return !!options.skipVariables;
     default:
       throw new Error(
@@ -122,7 +129,8 @@ const parenthesizedExpressions = [
   "AwaitExpression",
   "BinaryExpression",
   "LogicalExpression",
-  "MemberExpression"
+  "MemberExpression",
+  "OptionalMemberExpression"
 ];
 
 const parenthesizeExpression = (node, replacement) => {
@@ -380,5 +388,6 @@ module.exports = function (fileInfo, api, options) {
   mangleNestedObjects(ast, j, options, isTypescript);
   mangleLodashGets(ast, j, options, isTypescript);
   mangleLodashGets(ast, j, options, isTypescript, "lodash/fp");
+  mangleLodashGets(ast, j, options, isTypescript, "lodash-es");
   return ast.toSource();
 };
